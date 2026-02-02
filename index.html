@@ -5,11 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sourcemap Performance Test</title>
 </head>
+<script type = "module">
+    const checkbox = document.getElementById('runperiodicscript');
+    let intervalId;
+    checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+            intervalId = setInterval(() => {
+                // Some periodic work
+                runAllScripts();
+            }, 1000);
+        } else {
+            clearInterval(intervalId);
+        }
+    });
+
+    // Start the periodic script if the checkbox is initially checked
+    if (checkbox.checked) {
+        intervalId = setInterval(() => {
+            runAllScripts();
+        }, 1000);
+    }
+
+    function runAllScripts() {
+        // Simulate running some scripts
+        for (let i = 1; i <= 100; i++) {
+            // This is just a placeholder for actual script execution
+            eval("script" + i + "();");
+        }
+    }
+</script>
 <body>
     <h1>Sourcemap Performance Test</h1>
-    <p>This page loads 100 scripts, each referencing a non-existent sourcemap.</p>
-    <p>Open DevTools and record a performance profile of this page loading to reproduce the slow sourcemap issue.</p>
+    <p>This page loads 100 scripts, each referencing a non-existent sourcemap.  It can also run a function from each of the 100 scripts once per second if the checkbox below is checked.</p>
+    <p>Open DevTools and record a performance profile of this page to reproduce the slow sourcemap issue.  In Chromium 143 the issue always repros.  In 142 and earlier it only repros if the recorded profile includes the initial load of the scripts.</p>
     
+    <p><input type="checkbox" id="runperiodicscript" checked> Run some script every 1 second</p>
     <script src="scripts/script1.js"></script>
     <script src="scripts/script2.js"></script>
     <script src="scripts/script3.js"></script>
